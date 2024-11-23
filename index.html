@@ -1,0 +1,358 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #1a1d2e;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+    .header, .footer {
+      background-color: #23263a;
+      padding: 10px;
+      text-align: center;
+    }
+    .nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      background-color: #2e3140;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+    .nav a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .nav a:hover {
+      background-color: #5567a6;
+      transform: scale(1.1);
+    }
+    .nav a.active {
+      background-color: #40568a;
+      transform: scale(1.1);
+    }
+    .content {
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .category {
+      background-color: #2e3140;
+      padding: 20px;
+      border-radius: 10px;
+      transition: background-color 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+    .category:hover {
+      background-color: #5567a6;
+      transform: scale(1.1);
+    }
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .form input, .form textarea {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #2e3140;
+      color: #ffffff;
+      transition: background-color 0.3s;
+    }
+    .form input:focus, .form textarea:focus {
+      background-color: #35405d;
+      outline: none;
+    }
+    .form button {
+      background-color: #5567a6;
+      color: #ffffff;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    .form button:hover {
+      background-color: #40568a;
+    }
+    .search-bar input {
+      width: 80%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #2e3140;
+      color: #ffffff;
+      text-align: center;
+      transition: background-color 0.3s;
+    }
+    .search-bar input:focus {
+      background-color: #35405d;
+      outline: none;
+    }
+    .search-results {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .search-result {
+      background-color: #2e3140;
+      padding: 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .search-result:hover {
+      background-color: #5567a6;
+      transform: scale(1.05);
+    }
+    .seller-button {
+      margin-top: 50px;
+      background-color: #5567a6;
+      color: #ffffff;
+      border: none;
+      padding: 15px;
+      border-radius: 50px;
+      width: 80%;
+      max-width: 300px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      animation: pulse 2s infinite;
+      transition: transform 0.3s;
+    }
+    .seller-button:hover {
+      transform: scale(1.1);
+      background-color: #40568a;
+    }
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>Marketplace</h1>
+  </header>
+  <nav class="nav">
+    <a href="javascript:void(0);" id="main-link" onclick="showPage('main')">Главная</a>
+    <a href="javascript:void(0);" id="search-link" onclick="showPage('search')">Поиск</a>
+    <a href="javascript:void(0);" id="profile-link" onclick="showPage('profile')">Профиль</a>
+  </nav>
+  <main class="content">
+    <!-- Главная -->
+    <section id="main" class="page">
+      <h2>Добро пожаловать на Marketplace</h2>
+      <div class="categories">
+        <div class="category" onclick="showCategory('home')">Для дома</div>
+        <div class="category" onclick="showCategory('tech')">Техника</div>
+        <div class="category" onclick="showCategory('clothes')">Одежда</div>
+      </div>
+      <button class="seller-button" onclick="openSellerForm()">Стать продавцом</button>
+    </section>
+    <!-- Поиск -->
+    <section id="search" class="page" style="display: none;">
+      <h2>Поиск товаров</h2>
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Введите запрос для поиска" oninput="searchProducts()">
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </section>
+    <!-- Профиль -->
+    <section id="profile" class="page" style="display: none;">
+      <h2>Профиль</h2>
+      <p>Ваш уникальный ID: <span id="user-id"></span></p>
+    </section>
+    <!-- Форма для продавцов -->
+    <section id="seller-form" class="page" style="display: none;">
+      <h2>Форма для продавцов</h2>
+      <form class="form">
+        <input type="text" id="seller-number" placeholder="Ваш номер" required>
+        <textarea id="seller-description" placeholder="Описание" required></textarea>
+        <button type="submit">Отправить заявку</button>
+      </form>
+    </section>
+    <!-- Страница товаров -->
+    <section id="category-page" class="page" style="display: none;">
+      <h2 id="category-title">Товары</h2>
+      <div class="category-products" id="category-products"></div>
+    </section>
+    <!-- Страница товара -->
+    <section id="product-page" class="page" style="display: none;">
+      <h2 id="product-title"></h2>
+      <div id="product-details">
+        <img id="product-image" src="" alt="Product Image" style="width: 300px;">
+        <p id="product-description"></p>
+        <p>Цена: <span id="product-price"></span> грн</p>
+        <button id="buy-button">Купить</button>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    Marketplace © 2024
+  </footer>
+  <script>
+    const CHAT_ID = '1258306425';
+    const BOT_TOKEN = '7262467632:AAGv2FmMkHDcQKzYSLbw1VNtdapGi1pAw40';
+
+    // Генерация и сохранение уникального ID
+    function getUserId() {
+      let userId = localStorage.getItem('userId');
+      if (!userId) {
+        userId = 'USER-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        localStorage.setItem('userId', userId);
+      }
+      return userId;
+    }
+
+    document.getElementById('user-id').textContent = getUserId();
+
+    // Переключение вкладок
+    function showPage(pageId) {
+      document.querySelectorAll(".page").forEach(page => {
+        page.style.display = "none";
+      });
+      document.getElementById(pageId).style.display = "block";
+      document.querySelectorAll(".nav a").forEach(link => {
+        link.classList.remove('active');
+      });
+      document.getElementById(pageId + "-link").classList.add('active');
+    }
+
+    // Показать категорию товаров
+    function showCategory(category) {
+      const categoryProducts = categories[category];
+      const productsContainer = document.getElementById('category-products');
+      productsContainer.innerHTML = '';
+      categoryProducts.forEach(product => {
+        const productElement = document.createElement('div');
+        productElement.classList.add('category');
+        productElement.textContent = product.title;
+        productElement.onclick = () => openProductPage(product);
+        productsContainer.appendChild(productElement);
+      });
+      document.getElementById('category-title').textContent = category === 'home' ? 'Для дома' : category === 'tech' ? 'Техника' : 'Одежда';
+      showPage('category-page');
+    }
+
+    // Открыть страницу товара
+    function openProductPage(product) {
+      const productPage = document.getElementById('product-page');
+      const categoryPage = document.getElementById('category-page');
+      categoryPage.style.display = 'none';
+      productPage.style.display = 'block';
+      
+      document.getElementById('product-title').textContent = product.title;
+      document.getElementById('product-description').textContent = product.description;
+      document.getElementById('product-price').textContent = product.price;
+      document.getElementById('product-image').src = 'https://via.placeholder.com/300'; // Заглушка изображения
+    }
+
+    // Пример товаров для разных категорий
+    const categories = {
+      'home': [
+        { id: 1, title: 'Уютный диван', description: 'Мягкий и удобный диван для вашего дома.', price: Math.floor(Math.random() * 3000) + 500 },
+        { id: 2, title: 'Стол с креслами', description: 'Комплект мебели для вашего офиса или дома.', price: Math.floor(Math.random() * 3000) + 1000 }
+      ],
+      'tech': [
+        { id: 3, title: 'Смартфон X100', description: 'Лучший смартфон с высокой производительностью.', price: Math.floor(Math.random() * 5000) + 2000 },
+        { id: 4, title: 'Ноутбук Y500', description: 'Мощный ноутбук для работы и игр.', price: Math.floor(Math.random() * 5000) + 3000 }
+      ],
+      'clothes': [
+        { id: 5, title: 'Футболка с принтом', description: 'Модная футболка для летнего сезона.', price: Math.floor(Math.random() * 500) + 150 },
+        { id: 6, title: 'Джинсы', description: 'Удобные джинсы для повседневной носки.', price: Math.floor(Math.random() * 1000) + 500 }
+      ]
+    };
+
+    // Поиск товаров
+    function searchProducts() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const resultsContainer = document.getElementById('search-results');
+      resultsContainer.innerHTML = '';
+
+      let foundProducts = [];
+
+      Object.values(categories).forEach(category => {
+        category.forEach(product => {
+          if (product.title.toLowerCase().includes(query) || product.description.toLowerCase().includes(query)) {
+            foundProducts.push(product);
+          }
+        });
+      });
+
+      if (foundProducts.length > 0) {
+        foundProducts.forEach(product => {
+          const resultElement = document.createElement('div');
+          resultElement.classList.add('search-result');
+          resultElement.textContent = product.title;
+          resultElement.onclick = () => openProductPage(product);
+          resultsContainer.appendChild(resultElement);
+        });
+      } else {
+        resultsContainer.textContent = 'Товар не найден';
+      }
+    }
+
+    // Форма для продавца
+    function openSellerForm() {
+      showPage('seller-form');
+    }
+
+    // Отправка заявки продавца
+    document.querySelector('.form button').addEventListener('click', async (event) => {
+      event.preventDefault();
+      const number = document.getElementById('seller-number').value;
+      const description = document.getElementById('seller-description').value;
+      const message = Заявка от продавца:\nНомер: ${number}\nОписание: ${description}\nUser ID: ${getUserId()};
+      
+      try {
+        await fetch(https://api.telegram.org/bot${BOT_TOKEN}/sendMessage, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message
+          })
+        });
+        alert('Заявка отправлена!');
+        showPage('main');
+      } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Ошибка при отправке заявки!');
+      }
+    });
+
+    // Инициализация страницы по умолчанию
+    showPage('main');
+  </script>
+</body>
+</html>
